@@ -41,15 +41,30 @@ fn delete_empty_tokens(tokens:Vec<String>) -> Vec<String>
     cleared
 }
 
+
+/*
+    Node is element of tree.
+    But this parser implements depth-based tree.
+    It's simply array of Node, containing token and
+    depth value inside s expression. 
+    To compute you should begin from the deepest node.
+*/
 #[derive(Debug)]
 pub struct Node
 {
     pub token:String,
     pub depth:i32
 }
-pub fn compute_token_depth(tokens:&Vec<String>) ->Vec<Node>
+
+#[derive(Debug)]
+pub struct DTree
 {
-    let mut proto_tree:Vec<Node> = Vec::new();
+    pub nodes:Vec<Node>
+}
+
+pub fn parse(tokens:&Vec<String>) ->DTree
+{
+    let mut dtree = DTree{nodes:Vec::new()};
     
     let mut depth = 0;
     for token in tokens.iter()
@@ -62,9 +77,9 @@ pub fn compute_token_depth(tokens:&Vec<String>) ->Vec<Node>
         if not_bracket
         {
             let curr_node = Node{token:token.clone(),depth:depth};
-            proto_tree.push(curr_node);
+            dtree.nodes.push(curr_node);
         }
     }
 
-    proto_tree
+    dtree
 }

@@ -12,8 +12,8 @@ fn main() {
     }
     let script = fs::read_to_string(&args[1]).expect("can not open file!");
     let tokens = parser::tokenize(script);
-    let proto_tree = parser::compute_token_depth(&tokens);
-    for node in proto_tree.iter()
+    let dtree = parser::parse(&tokens);
+    for node in dtree.nodes.iter()
     {
         println!("{}{}",mult_str(' ', node.depth),node.token);
     }
