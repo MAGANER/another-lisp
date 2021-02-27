@@ -182,7 +182,7 @@ fn compute_binary_math_operation(op:Operator,args:&Vec<String>) -> String
                                             process::exit(-1);
                                          }
                                 };
-                                result = String::from(new_val);
+                    result = String::from(new_val);
                    }
         }
     }

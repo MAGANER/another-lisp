@@ -11,7 +11,7 @@
 pub struct Node
 {
     pub token:String,
-    pub depth:i32
+    pub depth:i32,
 }
 
 #[derive(Debug)]
