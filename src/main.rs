@@ -2,7 +2,8 @@ use std::env;
 use std::fs;
 use std::process;
 
-mod parser;
+mod interpreter;
+
 
 fn main() {
     let args:Vec<String> = env::args().collect();
@@ -11,8 +12,8 @@ fn main() {
         process::exit(0);
     }
     let script = fs::read_to_string(&args[1]).expect("can not open file!");
-    let tokens = parser::tokenize(script);
-    let dtree = parser::parse(&tokens);
+    let tokens = interpreter::tokenize(script);
+    let dtree  = interpreter::parse(&tokens);
     for node in dtree.nodes.iter()
     {
         println!("{}{}",mult_str(' ', node.depth),node.token);
