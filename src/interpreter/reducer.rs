@@ -1,4 +1,5 @@
 use super::parser;
+use super::type_checker;
 fn get_node_of_depth(depth:i32,dtree:&parser::DTree) -> parser::DTree
 {
     //return sub tree with passed depth
@@ -31,8 +32,28 @@ fn get_tree_max_depth(dtree:&parser::DTree) -> i32
                 -1
            }
 }
+fn get_arguments(subtree:&parser::DTree)    -> Vec<String>
+{
+    let mut args:Vec<String> = Vec::new();
+    for id in 1..subtree.nodes.len()-1
+    {
+        args.push(subtree.nodes[id].token.clone());
+    }
+
+    args
+}
+fn compute_sub_tree(subtree:&parser::DTree) //-> Option<String>
+{
+    let operation = subtree.nodes[0].token.clone();
+    let args      = get_arguments(subtree);
+}
+
 pub fn compute_whole_tree(dtree:&parser::DTree)
 {
     let mut begin = get_tree_max_depth(dtree);
-    println!("max depth is {}",begin);
+    while begin > 0
+    {
+        let subtree = get_node_of_depth(begin, dtree);
+        begin -= 1;
+    }
 }
