@@ -84,15 +84,3 @@ pub fn parse(tokens:&Vec<String>) -> DTree
 
     dtree
 }
-fn get_node_of_depth(depth:i32,dtree:&DTree) -> DTree
-{
-    let mut subtree = DTree{nodes:Vec::new()};
-    for node in dtree.nodes.iter()
-    {
-        if node.depth == depth
-        {
-            subtree.nodes.push((*node).clone());
-        }
-    }
-    subtree
-}
