@@ -63,15 +63,19 @@ fn delete_empty_tokens(tokens:Vec<String>) -> Vec<String>
     cleared
 }
 
-pub fn parse(tokens:&Vec<String>) -> DTree
+pub fn parse(tokens:&Vec<String>) -> Vec<DTree>
 {
+    let mut trees:Vec<DTree> = Vec::new();
     let mut dtree = DTree{nodes:Vec::new()};
     
+    let mut begin_counter = 0;
+    let mut end_counter   = 0;
+
     let mut depth = 0;
     for token in tokens.iter()
     {
-        if token == "(" { depth += 1; }
-        if token == ")" { depth -= 1; }
+        if token == "(" { depth += 1; begin_counter+=1; }
+        if token == ")" { depth -= 1; end_counter  +=1; }
 
         let not_bracket = token != "(" && token != ")";
 
@@ -80,7 +84,15 @@ pub fn parse(tokens:&Vec<String>) -> DTree
             let curr_node = Node{token:token.clone(),depth:depth};
             dtree.nodes.push(curr_node);
         }
+
+        if begin_counter == end_counter && begin_counter != 0
+        {
+            begin_counter = 0;
+            end_counter   = 0;
+            trees.push(dtree);
+            dtree = DTree{nodes:Vec::new()};
+        }
     }
 
-    dtree
+    trees
 }
