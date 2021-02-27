@@ -23,9 +23,10 @@ pub fn get_value_type(value:&String) -> Type
     let is_int   = numeric_counter == value.len() ;
     let is_float = has_point && numeric_counter == value.len() - 1;
     let is_bool  = value == "True" || value == "False";
+    let not_empty= !(is_negative && numeric_counter == 0);
 
-    if      is_int   || is_negative ^ (!is_int   || is_negative)   { Type::Int   }
-    else if is_float || is_negative ^ (!is_float || is_negative) { Type::Float }
+    if      is_int   || is_negative && not_empty   { Type::Int   }
+    else if is_float || is_negative && not_empty   { Type::Float }
     else if is_bool  { Type::Bool  }
     else { Type::String }
 }
