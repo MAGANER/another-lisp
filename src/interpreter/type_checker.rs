@@ -1,3 +1,4 @@
+#[derive(PartialEq)]
 pub enum Type
 {
     Int,
@@ -7,12 +8,13 @@ pub enum Type
 }
 
 
-fn get_value_type(value:&String) -> Type
+pub fn get_value_type(value:&String) -> Type
 {
     let mut numeric_counter = 0;
     let mut has_point = false;
     for ch in value.chars()
     {
+        if ch == '-'       { numeric_counter+=1; }
         if ch.is_numeric() { numeric_counter+=1; }
         if ch == '.'       { has_point = true  ; }   
     }
