@@ -35,16 +35,26 @@ fn main() {
     let _result = eval::eval(&_tree,&mut env);
     match _result
     {
-        Ok(val) =>  match val
-                        {
-                            expression::Expr::Symbol(v) => println!("{}",v),
-                            expression::Expr::Number(v) => println!("{}",v),
-                            expression::Expr::List(_)   => (),
-                            expression::Expr::Func(_)   => (),
-                        },
+        Ok(val) =>  print(&val),
         Err(err_val)=> match err_val
                         {
                             expression::Err::Reason(v) => println!("{}",v)
                         }
     };
+}
+fn print(expr:&expression::Expr)
+{
+    match expr
+    {
+        expression::Expr::Symbol(v) => println!("{}",v),
+        expression::Expr::Number(v) => println!("{}",v),
+        expression::Expr::List(v)   => {
+                                            for elem in v.iter()
+                                            {
+                                                print(elem);
+                                            }
+
+                                       },
+        expression::Expr::Func(_)   => (),   
+    }
 }
