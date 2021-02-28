@@ -19,7 +19,20 @@ fn main() {
     let script = fs::read_to_string(&args[1]).expect("can not open file!");
     let tokens = parser::tokenize(script);
     let tree   = parser::parse(&tokens);
-    let _result = eval::eval(&tree.unwrap().0,&mut env);
+
+    let _tree = match tree
+                {
+                    Ok(val)      => val.0,
+                    Err(err_val) => match err_val
+                                {
+                                    expression::Err::Reason(v) => 
+                                    {
+                                        println!("{}",v);
+                                        process::exit(-1);  
+                                    }         
+                                }
+                };
+    let _result = eval::eval(&_tree,&mut env);
     match _result
     {
         Ok(val) =>  match val
