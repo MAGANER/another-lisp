@@ -2,6 +2,7 @@
 #[derive(Clone)]
 pub enum Expr
 {
+    Bool(bool),
     Symbol(String),
     Number(f64),
     List(Vec<Expr>),

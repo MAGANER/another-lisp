@@ -69,11 +69,19 @@ fn read_seq<'a>(tokens: &'a [String]) -> Result<(expression::Expr, &'a [String])
     }
   }
 fn parse_atom(token: &str) -> expression::Expr {
-    //try to parse atom token as number, unless it's symbol      
-    let potential_float: Result<f64, std::num::ParseFloatError> = token.parse();
+    match token.as_ref()
+    {
+      "True" => expression::Expr::Bool(true),
+      "False"=> expression::Expr::Bool(false),
+      _ => 
+      {
+        //try to parse atom token as number, unless it's symbol      
+        let potential_float: Result<f64, std::num::ParseFloatError> = token.parse();
 
-    match potential_float {
-      Ok(v) => expression::Expr::Number(v),
-      Err(_) => expression::Expr::Symbol(token.to_string().clone())
+        match potential_float {
+            Ok(v) => expression::Expr::Number(v),
+            Err(_) => expression::Expr::Symbol(token.to_string().clone())
+                              }
+      }
     }
   }

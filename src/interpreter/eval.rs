@@ -13,6 +13,7 @@ pub fn eval(exp: &expression::Expr, env: &mut env::Env) -> Result<expression::Ex
           .map(|x| x.clone())
       ,
       expression::Expr::Number(_a) => Ok(exp.clone()),
+      expression::Expr::Bool(_a)   => Ok(exp.clone()),
       expression::Expr::List(list) => {
         let first_form = list
           .first()

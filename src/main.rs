@@ -55,6 +55,10 @@ fn print(expr:&expression::Expr)
 {
     match expr
     {
+        expression::Expr::Bool(v)   => {
+                                            if *v {println!("True");}
+                                            else {println!("False");}
+                                       },
         expression::Expr::Symbol(v) => println!("{}",v),
         expression::Expr::Number(v) => println!("{}",v),
         expression::Expr::List(v)   => {
