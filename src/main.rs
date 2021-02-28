@@ -18,9 +18,16 @@ fn main() {
 
     let script = fs::read_to_string(&args[1]).expect("can not open file!");
     let tokens = parser::tokenize(script);
-    let tree   = parser::parse(&tokens);
+    let trees  = parser::split_trees(tokens);
 
-    let _tree = match tree
+    run(trees,&mut env);
+}
+fn run(trees:Vec<Vec<String>>,env:&mut eval::env::Env)
+{
+    for tree in trees.iter()
+    {
+        let parsed   = parser::parse(&tree);
+        let _tree = match parsed
                 {
                     Ok(val)      => val.0,
                     Err(err_val) => match err_val
@@ -32,15 +39,17 @@ fn main() {
                                     }         
                                 }
                 };
-    let _result = eval::eval(&_tree,&mut env);
+    let _result = eval::eval(&_tree, env);
     match _result
     {
-        Ok(val) =>  print(&val),
+        Ok(val)     =>  print(&val),
         Err(err_val)=> match err_val
                         {
                             expression::Err::Reason(v) => println!("{}",v)
                         }
     };
+
+    }
 }
 fn print(expr:&expression::Expr)
 {
