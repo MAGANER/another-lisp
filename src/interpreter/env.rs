@@ -54,42 +54,58 @@ pub fn default_env() -> Env {
           Ok(expression::Expr::Number(sum_of_rest))
         }
       )
-    );
+    );  
+    data.insert(
+      "<".to_string(),
+      expression::Expr::Func(
+        |args: &[expression::Expr]| -> Result<expression::Expr, expression::Err> {
+          let floats = parse_list_of_floats(args);
+          let less   = |a:f64,b:f64| a < b;
+          apply_logic_op(less, floats)
+        }
+      )
+    ); 
     data.insert(
       ">".to_string(),
       expression::Expr::Func(
         |args: &[expression::Expr]| -> Result<expression::Expr, expression::Err> {
           let floats = parse_list_of_floats(args);
-
-          let result = 
-          match floats
-          {
-            Ok(val) => {
-                            if val.len() < 2
-                            {
-                              println!("not enough arguments for >");
-                              process::exit(-1);
-                            }
-                            let more = |a:f64, b:f64| a > b;
-                            compute_logic_op(more, &val)
-                       },
-            Err(err_val) => {
-                                match err_val
-                                {
-                                  expression::Err::Reason(v) => { println!("{}",v);
-                                                                  process::exit(-1); 
-                                                                }
-                                }
-                            },
-
-                    
-          };
-
-          Ok(expression::Expr::Bool(result))
+          let more = |a:f64,b:f64| a > b;
+          apply_logic_op(more, floats)
         }
       )
-    );    
-    
+    );
+    data.insert(
+      "=".to_string(),
+      expression::Expr::Func(
+        |args: &[expression::Expr]| -> Result<expression::Expr, expression::Err> {
+          let floats = parse_list_of_floats(args);
+          let eq = |a:f64,b:f64| a == b;
+          apply_logic_op(eq, floats)
+        }
+      )
+    );
+    data.insert(
+      ">=".to_string(),
+      expression::Expr::Func(
+        |args: &[expression::Expr]| -> Result<expression::Expr, expression::Err> {
+          let floats = parse_list_of_floats(args);
+          let more_eq = |a:f64,b:f64| a >= b;
+          apply_logic_op(more_eq, floats)
+        }
+      )
+    );
+    data.insert(
+      "<=".to_string(),
+      expression::Expr::Func(
+        |args: &[expression::Expr]| -> Result<expression::Expr, expression::Err> {
+          let floats = parse_list_of_floats(args);
+          let less_eq = |a:f64,b:f64| a <= b;
+          apply_logic_op(less_eq, floats)
+        }
+      )
+    );
+
     Env {data}
   }
 
@@ -105,7 +121,37 @@ fn parse_single_float(exp: &expression::Expr) -> Result<f64, expression::Err> {
       _ => Err(expression::Err::Reason("expected a number".to_string())),
     }
 }
-fn compute_logic_op<F:Fn(f64,f64) -> bool> (f:F,val:&Vec<f64>) -> bool
+
+type LogOp = fn(f64,f64) -> bool;
+
+fn apply_logic_op(f:LogOp,floats:Result<Vec<f64>, expression::Err>) -> Result<expression::Expr, expression::Err>
+{
+  let result = 
+  match floats
+  {
+    Ok(val) => {
+                    if val.len() < 2
+                    {
+                      println!("not enough arguments for >");
+                      process::exit(-1);
+                    }
+                    compute_logic_op(f, &val)
+               },
+    Err(err_val) => {
+                        match err_val
+                        {
+                          expression::Err::Reason(v) => { println!("{}",v);
+                                                          process::exit(-1); 
+                                                        }
+                        }
+                    },
+
+            
+  };
+
+  Ok(expression::Expr::Bool(result))  
+}
+fn compute_logic_op (f:LogOp,val:&Vec<f64>) -> bool
 {
     let mut results:Vec<bool> = Vec::new();
     let mut counter = 0;
@@ -123,3 +169,4 @@ fn compute_logic_op<F:Fn(f64,f64) -> bool> (f:F,val:&Vec<f64>) -> bool
 
     results.iter().fold(results[0],|a,b| a && *b)
 }
+
