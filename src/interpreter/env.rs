@@ -70,21 +70,8 @@ pub fn default_env() -> Env {
                               println!("not enough arguments for >");
                               process::exit(-1);
                             }
-                            let mut results:Vec<bool> = Vec::new();
-                            let mut counter = 0;
-                            while counter < val.len()
-                            {
-                              let curr = val[counter];
-                              if counter+1 < val.len()
-                              {
-                                let next = val[counter+1];
-                                let result = curr > next;
-                                results.push(result);
-                              }
-                              counter += 1;
-                            }
-
-                            results.iter().fold(results[0],|a,b| a && *b)
+                            let more = |a:f64, b:f64| a > b;
+                            compute_logic_op(more, &val)
                        },
             Err(err_val) => {
                                 match err_val
@@ -106,16 +93,33 @@ pub fn default_env() -> Env {
     Env {data}
   }
 
-  fn parse_list_of_floats(args: &[expression::Expr]) -> Result<Vec<f64>, expression::Err> {
+fn parse_list_of_floats(args: &[expression::Expr]) -> Result<Vec<f64>, expression::Err> {
     args
       .iter()
       .map(|x| parse_single_float(x))
       .collect()
-  }
-  
-  fn parse_single_float(exp: &expression::Expr) -> Result<f64, expression::Err> {
+}  
+fn parse_single_float(exp: &expression::Expr) -> Result<f64, expression::Err> {
     match exp {
         expression::Expr::Number(num) => Ok(*num),
       _ => Err(expression::Err::Reason("expected a number".to_string())),
     }
-  }
+}
+fn compute_logic_op<F:Fn(f64,f64) -> bool> (f:F,val:&Vec<f64>) -> bool
+{
+    let mut results:Vec<bool> = Vec::new();
+    let mut counter = 0;
+    while counter < val.len()
+    {
+      let curr = val[counter];
+      if counter+1 < val.len()
+      {
+        let next = val[counter+1];
+        let result = f(curr,next);
+        results.push(result);
+      }
+      counter += 1;
+   }
+
+    results.iter().fold(results[0],|a,b| a && *b)
+}
