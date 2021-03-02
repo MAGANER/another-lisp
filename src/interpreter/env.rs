@@ -155,7 +155,36 @@ pub fn default_env() -> Env {
         }
       )
     );
+    data.insert(
+      "!".to_string(),
+      expression::Expr::Func(
+        |args: &[expression::Expr]| -> Result<expression::Expr, expression::Err> {
+          let booleans = parse_list_of_booleans(args);
 
+          let result =
+          match booleans
+          {
+            Ok(val) =>  {
+                            if val.len() != 1
+                            {
+                              println!("! takes 1 argument only!");
+                            }
+                            !val[0]
+                        },
+            Err(err)=> {
+                          match err
+                          {
+                          expression::Err::Reason(v) => { println!("{}",v);
+                                                process::exit(-1); 
+                          }
+                        }
+          }
+          };
+
+          Ok(expression::Expr::Bool(result)) 
+        }
+      )
+    );
     Env {data}
   }
 
