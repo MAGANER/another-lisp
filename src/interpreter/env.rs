@@ -8,6 +8,8 @@ pub struct Env {
 }
 
 pub fn default_env() -> Env {
+    //init basic operations, functions e.t.c
+
     let mut data: HashMap<String, expression::Expr> = HashMap::new();
     data.insert(
       "+".to_string(), 
@@ -109,13 +111,16 @@ pub fn default_env() -> Env {
     Env {data}
   }
 
-fn parse_list_of_floats(args: &[expression::Expr]) -> Result<Vec<f64>, expression::Err> {
+fn parse_list_of_floats(args: &[expression::Expr]) -> Result<Vec<f64>, expression::Err> 
+{
     args
       .iter()
       .map(|x| parse_single_float(x))
       .collect()
 }  
-fn parse_single_float(exp: &expression::Expr) -> Result<f64, expression::Err> {
+fn parse_single_float(exp: &expression::Expr) -> Result<f64, expression::Err> 
+{
+    //return parsed float and throw error, if it's not number
     match exp {
         expression::Expr::Number(num) => Ok(*num),
       _ => Err(expression::Err::Reason("expected a number".to_string())),
@@ -123,9 +128,12 @@ fn parse_single_float(exp: &expression::Expr) -> Result<f64, expression::Err> {
 }
 
 type LogOp = fn(f64,f64) -> bool;
-
 fn apply_logic_op(f:LogOp,floats:Result<Vec<f64>, expression::Err>) -> Result<expression::Expr, expression::Err>
 {
+  /*
+      first of all check are values of right type,
+      then compute it and return the result.
+  */
   let result = 
   match floats
   {
@@ -153,6 +161,10 @@ fn apply_logic_op(f:LogOp,floats:Result<Vec<f64>, expression::Err>) -> Result<ex
 }
 fn compute_logic_op (f:LogOp,val:&Vec<f64>) -> bool
 {
+  /*
+      compute boolean function, reducing arguments,
+      like python's reduce
+  */
     let mut results:Vec<bool> = Vec::new();
     let mut counter = 0;
     while counter < val.len()
