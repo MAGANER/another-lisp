@@ -107,6 +107,54 @@ pub fn default_env() -> Env {
         }
       )
     );
+    data.insert(
+      "&&".to_string(),
+      expression::Expr::Func(
+        |args: &[expression::Expr]| -> Result<expression::Expr, expression::Err> {
+          let booleans = parse_list_of_booleans(args);
+
+          let result =
+          match booleans
+          {
+            Ok(val) =>  val.iter().fold(val[0],|a,b| a && *b),
+            Err(err)=> {
+                          match err
+                          {
+                          expression::Err::Reason(v) => { println!("{}",v);
+                                                process::exit(-1); 
+                          }
+                        }
+          }
+          };
+
+          Ok(expression::Expr::Bool(result)) 
+        }
+      )
+    );
+    data.insert(
+      "||".to_string(),
+      expression::Expr::Func(
+        |args: &[expression::Expr]| -> Result<expression::Expr, expression::Err> {
+          let booleans = parse_list_of_booleans(args);
+
+          let result =
+          match booleans
+          {
+            Ok(val) =>  val.iter().fold(val[0],|a,b| a || *b),
+            Err(err)=> {
+                          match err
+                          {
+                          expression::Err::Reason(v) => { println!("{}",v);
+                                                process::exit(-1); 
+                          }
+                        }
+          }
+          };
+
+          Ok(expression::Expr::Bool(result)) 
+        }
+      )
+    );
 
     Env {data}
   }
@@ -125,6 +173,23 @@ fn parse_single_float(exp: &expression::Expr) -> Result<f64, expression::Err>
         expression::Expr::Number(num) => Ok(*num),
       _ => Err(expression::Err::Reason("expected a number".to_string())),
     }
+}
+
+fn parse_list_of_booleans(args: &[expression::Expr]) -> Result<Vec<bool>, expression::Err> 
+{
+    args
+      .iter()
+      .map(|x| parse_single_bool(x))
+      .collect()
+} 
+fn parse_single_bool(expr: &expression::Expr) -> Result<bool,expression::Err>
+{
+  //return parsed bool value or throw error if it's not one
+  match expr
+  {
+      expression::Expr::Bool(val) => Ok(*val),
+      _ => Err(expression::Err::Reason("expected a boolean value".to_string()))
+  }
 }
 
 type LogOp = fn(f64,f64) -> bool;
