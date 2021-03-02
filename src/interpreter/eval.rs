@@ -4,13 +4,20 @@ pub use super::env;
 pub fn eval(exp: &expression::Expr, env: &mut env::Env) -> Result<expression::Expr, expression::Err> {
     match exp {
         expression::Expr::Symbol(k) =>
-          env.data.get(k)
-          .ok_or(
-            expression::Err::Reason(
-              format!("unexpected symbol k='{}'", k)
+          
+          if expression::is_string_value(k)
+          {
+              Ok(exp.clone())
+          } else 
+          {
+            env.data.get(k)
+            .ok_or(
+              expression::Err::Reason(
+                format!("unexpected symbol k='{}'", k)
+              )
             )
-          )
-          .map(|x| x.clone())
+            .map(|x| x.clone())
+          }
       ,
       expression::Expr::Number(_a) => Ok(exp.clone()),
       expression::Expr::Bool(_a)   => Ok(exp.clone()),
