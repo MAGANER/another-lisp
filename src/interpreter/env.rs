@@ -14,10 +14,36 @@ pub fn default_env() -> Env {
     data.insert(
       "+".to_string(), 
       expression::Expr::Func(
-        |args: &[expression::Expr]| -> Result<expression::Expr, expression::Err> {
-          let sum = parse_list_of_floats(args)?.iter().fold(0.0, |sum, a| sum + a);
-          
-          Ok(expression::Expr::Number(sum))
+        |args: &[expression::Expr]| -> Result<expression::Expr, expression::Err> 
+        {
+          let floats = parse_list_of_floats(args);
+          match floats
+          {
+            Ok (val) => {  
+                          let result = val.iter().fold(0.0,|a,b| a + b);
+                          Ok(expression::Expr::Number(result)) 
+                      },
+            _ => 
+            {
+              let strings = parse_list_of_strings(args);
+              match strings
+              {
+                Ok(val)      => {
+                                    let result = val.iter().fold(String::from(""),|a:String,b:&String| a+b );
+                                    Ok(expression::Expr::Symbol(result))
+                                },
+                Err(err_val) => match err_val
+                                {
+                                  expression::Err::Reason(v) => {
+                                                                    println!("{}",v);
+                                                                    process::exit(-1);
+                                                                }
+                                } 
+              }
+            }
+          }
+
+      
         }
       )
     );
@@ -258,7 +284,7 @@ fn parse_single_string(expr: &expression::Expr) -> Result<String, expression::Er
 {
   match expr
   {
-    expression::Expr::Symbol(val) => Ok(String::from(&val[1..val.len()])),
+    expression::Expr::Symbol(val) => Ok(String::from(&val[1..val.len()-1])),
     _ => Err(expression::Err::Reason("expected a string value".to_string()))
   }
 }
@@ -319,6 +345,3 @@ fn compute_logic_op (f:LogOp,val:&Vec<f64>) -> bool
 
     results.iter().fold(results[0],|a,b| a && *b)
 }
-
-
-

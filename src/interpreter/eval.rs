@@ -13,7 +13,7 @@ pub fn eval(exp: &expression::Expr, env: &mut env::Env) -> Result<expression::Ex
             env.data.get(k)
             .ok_or(
               expression::Err::Reason(
-                format!("unexpected symbol k='{}'", k)
+                format!("unexpected symbol k={}", k)
               )
             )
             .map(|x| x.clone())
