@@ -82,8 +82,34 @@ pub fn default_env() -> Env {
       expression::Expr::Func(
         |args: &[expression::Expr]| -> Result<expression::Expr, expression::Err> {
           let floats = parse_list_of_floats(args);
-          let eq = |a:f64,b:f64| a == b;
-          apply_logic_op(eq, floats)
+          match floats
+          {
+            Ok (val) => {  
+                          let first:f64  = *val.iter().nth(0).unwrap(); 
+                          let result = val.iter().all(|x| first == *x);
+                          Ok(expression::Expr::Bool(result)) 
+                      },
+            _ => 
+            {
+              let strings = parse_list_of_strings(args);
+              match strings
+              {
+                Ok(val)      => {
+                                    let first:String  = val.iter().nth(0).unwrap().clone(); 
+                                    let result = val.iter().all(|x| first == *x);
+                                    Ok(expression::Expr::Bool(result))
+                                },
+                Err(err_val) => match err_val
+                                {
+                                  expression::Err::Reason(v) => {
+                                                                    println!("{}",v);
+                                                                    process::exit(-1);
+                                                                }
+                                } 
+              }
+            }
+          }
+
         }
       )
     );
@@ -221,7 +247,25 @@ fn parse_single_bool(expr: &expression::Expr) -> Result<bool,expression::Err>
   }
 }
 
+fn parse_list_of_strings(args:&[expression::Expr]) -> Result<Vec<String>, expression::Err>
+{
+  args
+    .iter()
+    .map(|x| parse_single_string(x))
+    .collect()
+}
+fn parse_single_string(expr: &expression::Expr) -> Result<String, expression::Err>
+{
+  match expr
+  {
+    expression::Expr::Symbol(val) => Ok(String::from(&val[1..val.len()])),
+    _ => Err(expression::Err::Reason("expected a string value".to_string()))
+  }
+}
+
 type LogOp = fn(f64,f64) -> bool;
+
+
 fn apply_logic_op(f:LogOp,floats:Result<Vec<f64>, expression::Err>) -> Result<expression::Expr, expression::Err>
 {
   /*
@@ -275,4 +319,6 @@ fn compute_logic_op (f:LogOp,val:&Vec<f64>) -> bool
 
     results.iter().fold(results[0],|a,b| a && *b)
 }
+
+
 
