@@ -284,7 +284,7 @@ fn parse_single_string(expr: &expression::Expr) -> Result<String, expression::Er
 {
   match expr
   {
-    expression::Expr::Symbol(val) => Ok(String::from(&val[1..val.len()-1])),
+    expression::Expr::Symbol(val) => Ok(String::from(val).chars().filter(|x| *x != '"').collect()),
     _ => Err(expression::Err::Reason("expected a string value".to_string()))
   }
 }
