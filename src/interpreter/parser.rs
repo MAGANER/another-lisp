@@ -3,12 +3,38 @@ use super::expression;
 pub fn tokenize(expr:String) -> Vec<String>
 {   
     //every token is split with white space
-    expr
-        .replace("(","( ")
-        .replace(")"," ) ")
-        .split_whitespace()
-        .map(|x| x.to_string())
-        .collect()
+    let mut tokens:Vec<String> = Vec::new();
+
+    let mut current_token:String = "".to_string();
+    let mut str_counter = 0;
+
+    for ch in expr.replace("(","( ").replace(")"," ) ").chars()
+    {
+      if ch == '"' { str_counter+= 1;}
+
+      if ch == '(' || ch == ')'
+      {
+        tokens.push(ch.to_string());
+      }
+      else if !ch.is_whitespace() || str_counter != 0
+      {
+        current_token.push(ch);
+      }
+      else
+      {
+        if !current_token.chars().all(|x| x.is_whitespace()) 
+        {
+          tokens.push(current_token.clone());
+        }
+        current_token.clear();
+      }
+      if str_counter == 2
+      {
+        str_counter = 0;
+      }
+      
+    }
+    tokens
 }
 pub fn split_trees(tokens:Vec<String>) -> Vec<Vec<String>>
 {
