@@ -64,8 +64,8 @@ fn eval_built_in_form
   {
     expression::Expr::Symbol(s) => 
       match s.as_ref() {
-        "if"  => Some(compute_if(arg_forms,env)),
-        "def" => None, //Some(eval_def_args(arg_forms, env)),
+        "if"  => Some(compute_if(arg_forms , env)),
+        "def" => Some(compute_def(arg_forms, env)),
         _     => None,
       },
     _ => None,
@@ -91,12 +91,40 @@ fn compute_if(arg_forms: &[expression::Expr], env: &mut env::Env) -> Result<expr
               //unless try to compute the second one
               let form_idx = if b { 1 } else { 2 };
               let res_form = arg_forms.get(form_idx)
-                                      .ok_or(expression::Err::Reason( format!("expected form idx={}", form_idx))
-                                      )?;
+                                      .ok_or(expression::Err::Reason( format!("can not find option to do={}",form_idx)))?;
               let res_eval = eval(res_form, env);
     
               res_eval
           },
     _ => Err(expression::Err::Reason(format!("unexpected test form")))
   }
+}
+fn compute_def(arg_forms: &[expression::Expr], env: &mut env::Env) -> Result<expression::Expr, expression::Err> 
+{
+  //init variable into the environment
+
+  //try to get head of list and arguments
+  let first_form = arg_forms.first()
+                            .ok_or(expression::Err::Reason("expected first form".to_string(),))?;
+
+       
+  //get the name of variable
+  let name = 
+  match first_form 
+  {
+    expression::Expr::Symbol(s) => Ok(s.clone()),
+    _                           => Err(expression::Err::Reason( "expected first form to be a symbol".to_string()))
+  }?;
+
+  //get the value of var
+  let val = arg_forms.get(1)
+                    .ok_or(expression::Err::Reason("expected second form".to_string()))?;
+  if arg_forms.len() > 2 
+  {
+    return Err(expression::Err::Reason("def can only have two forms ".to_string()))
+  } 
+  let second_eval = eval(val, env)?;
+  env.data.insert(name, second_eval);
+  
+  Ok(first_form.clone())
 }
