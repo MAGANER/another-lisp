@@ -64,9 +64,10 @@ fn eval_built_in_form
   {
     expression::Expr::Symbol(s) => 
       match s.as_ref() {
-        "if"  => Some(compute_if(arg_forms , env)),
-        "def" => Some(compute_def(arg_forms, env)),
-        _     => None,
+        "if"    => Some(compute_if(arg_forms , env)),
+        "def"   => Some(compute_def(arg_forms, env)),
+        "print" => {print_data(arg_forms, env); Some(Ok(expression::Expr::Bool(true)))},
+        _       => None,
       },
     _ => None,
   }
@@ -132,4 +133,51 @@ fn compute_def(arg_forms: &[expression::Expr], env: &mut env::Env) -> Result<exp
   env.data.insert(name, second_eval);
   
   Ok(first_form.clone())
+}
+fn print_data(arg_forms: &[expression::Expr],env:&mut env::Env)
+{
+  //print all arguments and compute it if it's required
+
+
+  let mut counter = 0;
+  while counter < arg_forms.len()
+  {
+    let arg = &arg_forms[counter];
+    let result = eval(arg,env);
+    match result
+    {
+      Ok(val) =>print(&val),
+      Err(err_val) =>
+      {
+          match err_val
+          {
+            expression::Err::Reason(v) => println!("{}",v.to_string())
+          }
+      }
+    }
+
+    counter += 1;
+  }
+}
+
+
+pub fn print(expr:&expression::Expr)
+{
+    match expr
+    {
+        expression::Expr::Bool(v)   => {
+                                            if *v {println!("True");}
+                                            else {println!("False");}
+                                       },
+        expression::Expr::Symbol(v) => println!("{}",v),
+        expression::Expr::Number(v) => println!("{}",v),
+        expression::Expr::List(v)   => {
+                                            for elem in v.iter()
+                                            {
+                                                print(elem);
+                                            }
+
+                                       },
+        expression::Expr::Func(_)   => (),   
+    }
 }

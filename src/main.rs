@@ -48,7 +48,7 @@ fn run(trees:Vec<Vec<String>>,env:&mut eval::env::Env,options:&execution_options
     let _result = eval::eval(&_tree, env);
     match _result
     {
-        Ok(val)     =>  if options.print_every_operation {print(&val) },
+        Ok(val)     =>  if options.print_every_operation {eval::print(&val) },
         Err(err_val)=> match err_val
                         {
                             expression::Err::Reason(v) => println!("{}",v)
@@ -57,23 +57,4 @@ fn run(trees:Vec<Vec<String>>,env:&mut eval::env::Env,options:&execution_options
 
     }
 }
-fn print(expr:&expression::Expr)
-{
-    match expr
-    {
-        expression::Expr::Bool(v)   => {
-                                            if *v {println!("True");}
-                                            else {println!("False");}
-                                       },
-        expression::Expr::Symbol(v) => println!("{}",v),
-        expression::Expr::Number(v) => println!("{}",v),
-        expression::Expr::List(v)   => {
-                                            for elem in v.iter()
-                                            {
-                                                print(elem);
-                                            }
 
-                                       },
-        expression::Expr::Func(_)   => (),   
-    }
-}
