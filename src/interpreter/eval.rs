@@ -103,6 +103,12 @@ fn compute_def(arg_forms: &[expression::Expr], env: &mut env::Env) -> Result<exp
 {
   //init variable into the environment
 
+  //it takes only variable name and it's value(atom or expression to compute)
+  if arg_forms.len() > 2 
+  {
+    return Err(expression::Err::Reason("def can only have two arguments ".to_string()))
+  } 
+
   //try to get head of list and arguments
   let first_form = arg_forms.first()
                             .ok_or(expression::Err::Reason("expected first form".to_string(),))?;
@@ -118,11 +124,9 @@ fn compute_def(arg_forms: &[expression::Expr], env: &mut env::Env) -> Result<exp
 
   //get the value of var
   let val = arg_forms.get(1)
-                    .ok_or(expression::Err::Reason("expected second form".to_string()))?;
-  if arg_forms.len() > 2 
-  {
-    return Err(expression::Err::Reason("def can only have two forms ".to_string()))
-  } 
+                    .ok_or(expression::Err::Reason("expected second argument".to_string()))?;
+
+  //compute it and then add it to environment
   let second_eval = eval(val, env)?;
   env.data.insert(name, second_eval);
   
