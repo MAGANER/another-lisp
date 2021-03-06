@@ -78,10 +78,11 @@ fn compute_if(arg_forms: &[expression::Expr], env: &mut env::Env) -> Result<expr
   //get the head and tail of args
   let test_form = arg_forms.first().ok_or(
     expression::Err::Reason(
-      "expected test form".to_string(),
+      "expected argument to check it's logical value!".to_string(),
     )
   )?;
 
+  //compute the condition
   let test_eval = eval(test_form, env)?;
   match test_eval 
   {
@@ -96,7 +97,7 @@ fn compute_if(arg_forms: &[expression::Expr], env: &mut env::Env) -> Result<expr
     
               res_eval
           },
-    _ => Err(expression::Err::Reason(format!("unexpected test form")))
+    _ => Err(expression::Err::Reason(format!("unexpected argument! it should be Bool!")))
   }
 }
 fn compute_def(arg_forms: &[expression::Expr], env: &mut env::Env) -> Result<expression::Expr, expression::Err> 
@@ -111,7 +112,7 @@ fn compute_def(arg_forms: &[expression::Expr], env: &mut env::Env) -> Result<exp
 
   //try to get head of list and arguments
   let first_form = arg_forms.first()
-                            .ok_or(expression::Err::Reason("expected first form".to_string(),))?;
+                            .ok_or(expression::Err::Reason("expected first argument".to_string(),))?;
 
        
   //get the name of variable
@@ -119,7 +120,7 @@ fn compute_def(arg_forms: &[expression::Expr], env: &mut env::Env) -> Result<exp
   match first_form 
   {
     expression::Expr::Symbol(s) => Ok(s.clone()),
-    _                           => Err(expression::Err::Reason( "expected first form to be a symbol".to_string()))
+    _                           => Err(expression::Err::Reason( "expected first argument to be a symbol".to_string()))
   }?;
 
   //get the value of var
