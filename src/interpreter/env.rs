@@ -290,8 +290,6 @@ fn parse_single_string(expr: &expression::Expr) -> Result<String, expression::Er
 }
 
 type LogOp = fn(f64,f64) -> bool;
-
-
 fn apply_logic_op(f:LogOp,floats:Result<Vec<f64>, expression::Err>) -> Result<expression::Expr, expression::Err>
 {
   /*
