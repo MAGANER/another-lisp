@@ -7,6 +7,7 @@ pub enum Expr
     Number(f64),
     List(Vec<Expr>),
     Func(fn(&[Expr]) -> Result<Expr, Err>),
+    //Lambda(LambdaStruct),
 }
 
 //inner error type
@@ -15,6 +16,14 @@ pub enum Err
 {
     Reason(String)
 }
+
+#[derive(Clone)]
+pub struct LambdaStruct
+{
+    pub param: Box<Expr>, // Box to avoid recursive type definition
+    pub body : Box<Expr>
+}
+
 
 pub fn is_string_value(val:&String) -> bool
 {
