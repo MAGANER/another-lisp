@@ -34,8 +34,20 @@ pub fn tokenize(expr:String) -> Vec<String>
       }
       
     }
+    count_brackets(&tokens);
     tokens
 }
+fn count_brackets(tokens:&Vec<String>)
+{
+  let open_number = tokens.iter().filter(|&x| x.clone() == "(".to_string()).collect::<Vec<&String>>().len();
+  let close_number= tokens.iter().filter(|&x| x.clone() == ")".to_string()).collect::<Vec<&String>>().len();
+  if open_number != close_number
+  {
+    println!("no equal number of ( and )!");
+    std::process::exit(-1);
+  }
+}
+
 pub fn split_trees(tokens:Vec<String>) -> Vec<Vec<String>>
 {
   let mut trees:Vec<Vec<String>> = Vec::new();
