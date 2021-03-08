@@ -14,7 +14,8 @@ pub fn default_env() -> Env
     let mut data: HashMap<String, expression::Expr> = HashMap::new();
     data.insert(
       "+".to_string(), 
-      expression::Expr::Func(
+      expression::Expr::Func
+      (
         |args: &[expression::Expr]| -> Result<expression::Expr, expression::Err> 
         {
           let floats = parse_list_of_floats(args);
@@ -50,13 +51,33 @@ pub fn default_env() -> Env
     );
     data.insert(
       "-".to_string(), 
-      expression::Expr::Func(
-        |args: &[expression::Expr]| -> Result<expression::Expr, expression::Err> {
-          let floats = parse_list_of_floats(args)?;
-          let first = *floats.first().ok_or(expression::Err::Reason("expected at least one number".to_string()))?;
-          let sum_of_rest = floats[1..].iter().fold(0.0, |sum, a| sum + a);
-          
-          Ok(expression::Expr::Number(first - sum_of_rest))
+      expression::Expr::Func
+      (
+        |args: &[expression::Expr]| -> Result<expression::Expr, expression::Err> 
+        {
+          let floats = parse_list_of_floats(args);
+          match floats
+          {
+            Ok(val) => {  
+                          let first       = val.first().unwrap();
+
+                          let sum_of_rest = val[1..].iter().fold(0.0, |sum, a| sum + a);
+                          Ok(expression::Expr::Number(first - sum_of_rest)) 
+                      },
+            Err(val) =>
+            {
+              match val
+              {
+                expression::Err::Reason(v) => 
+                {
+                     println!("{}",v);
+                    process::exit(-1);
+                }
+              }
+            } 
+          }
+
+      
         }
       )
     );
