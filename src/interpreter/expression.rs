@@ -7,7 +7,7 @@ pub enum Expr
     Number(f64),
     List(Vec<Expr>),
     Func(fn(&[Expr]) -> Result<Expr, Err>),
-    //Lambda(LambdaStruct),
+    Lambda(LambdaStruct),
 }
 
 //inner error type

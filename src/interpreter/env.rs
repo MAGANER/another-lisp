@@ -4,10 +4,11 @@ use super::expression;
 
 #[derive(Clone)]
 pub struct Env {
-  pub data: HashMap<String, expression::Expr>,
+  pub data  : HashMap<String, expression::Expr>
 }
 
-pub fn default_env() -> Env {
+pub fn default_env() -> Env
+{
     //init basic operations, functions e.t.c
 
     let mut data: HashMap<String, expression::Expr> = HashMap::new();

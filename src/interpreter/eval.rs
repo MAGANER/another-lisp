@@ -21,7 +21,8 @@ pub fn eval(exp: &expression::Expr, env: &mut env::Env) -> Result<expression::Ex
       ,
       expression::Expr::Number(_a) => Ok(exp.clone()),
       expression::Expr::Bool(_a)   => Ok(exp.clone()),
-      expression::Expr::List(list) => {
+      expression::Expr::List(list) => 
+      {
         let first_form = list
           .first()
           .ok_or(expression::Err::Reason("expected a non-empty list".to_string()))?;
@@ -35,22 +36,20 @@ pub fn eval(exp: &expression::Expr, env: &mut env::Env) -> Result<expression::Ex
               let first_eval = eval(first_form, env)?;
               match first_eval 
               {
-                  expression::Expr::Func(f) => {
-                  let args_eval = arg_forms
-                  .iter()
-                  .map(|x| eval(x, env))
-                  .collect::<Result<Vec<expression::Expr>, expression::Err>>();
-                  f(&args_eval?)
-              },
-              _ => Err(
+                  expression::Expr::Func(f) => 
+                  {
+                        let args_eval = compute_expr_list(arg_forms,env);
+                        f(&args_eval?)
+                  },
+                  _ => Err(
                         expression::Err::Reason("first form must be a function".to_string())
-                      ),
+                          ),
               }
           }
         }
       },
-      expression::Expr::Func(_) => Err(
-        expression::Err::Reason("unexpected form".to_string())
+      _ => Err(
+        expression::Err::Reason("unexpected function!".to_string())
       ),
     }
   }
@@ -134,6 +133,7 @@ fn compute_def(arg_forms: &[expression::Expr], env: &mut env::Env) -> Result<exp
   
   Ok(first_form.clone())
 }
+
 fn print_data(arg_forms: &[expression::Expr],env:&mut env::Env)
 {
   //print all arguments and compute it if it's required
@@ -159,8 +159,6 @@ fn print_data(arg_forms: &[expression::Expr],env:&mut env::Env)
     counter += 1;
   }
 }
-
-
 pub fn print(expr:&expression::Expr)
 {
     match expr
@@ -178,6 +176,15 @@ pub fn print(expr:&expression::Expr)
                                             }
 
                                        },
-        expression::Expr::Func(_)   => (),   
+        _ => ()
     }
+}
+
+fn compute_expr_list(arg_forms: &[expression::Expr], env: &mut env::Env) 
+-> Result<Vec<expression::Expr>, expression::Err> 
+{
+  arg_forms
+    .iter()
+    .map(|x| eval(x, env))
+    .collect()
 }
