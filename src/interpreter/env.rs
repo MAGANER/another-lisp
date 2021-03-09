@@ -416,3 +416,28 @@ fn compute_logic_op (f:LogOp,val:&Vec<f64>) -> bool
 
     results.iter().fold(results[0],|a,b| a && *b)
 }
+
+pub fn unite_environments(env1:&Env, env2:&Env) -> Env
+{
+    let mut new_env = env1.clone();
+    for (name,val) in env2.data.iter()
+    {
+      new_env.data.insert(name.to_string(),val.clone());
+    }
+    new_env
+}
+pub fn substract_environments(env1:&mut Env, env2:&mut Env) -> Env
+{
+  //return new envinronment with all elements contained with env1, but not env2
+  let mut new_env = Env{data:HashMap::new()};
+  for (key, val) in env1.data.iter()
+  {
+    match env2.data.get(key)
+    {
+      None => new_env.data.insert(key.to_string(),val.clone()),
+      _    => None
+    };
+  }
+
+  new_env
+}
