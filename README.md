@@ -15,8 +15,9 @@ unless try to compute the second one, if it exists.<br/>
 Takes 2 arguments: name and value<br/>
 6) Lambdas: (fn (a) (+ a 1))<br/>
 Also you can execute it:<br/>
-*
-(print<br/>
-    (fn (a) (+ a 1) 2)<br/>
+
+```lisp
+(print
+    (fn (a) (+ a 1) 2)
 )
-*
+```
