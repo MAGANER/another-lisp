@@ -56,9 +56,15 @@ pub fn default_env() -> Env
         |args: &[expression::Expr]| -> Result<expression::Expr, expression::Err> 
         {
           let floats = parse_list_of_floats(args);
+          
           match floats
           {
             Ok(val) => {  
+                          if val.len() == 0
+                          {
+                            //just return zero
+                            return Ok(expression::Expr::Number(0.0f64));
+                          }
                           let first       = val.first().unwrap();
 
                           let sum_of_rest = val[1..].iter().fold(0.0, |sum, a| sum + a);
@@ -76,15 +82,15 @@ pub fn default_env() -> Env
               }
             } 
           }
-
-      
         }
       )
     );
     data.insert(
       "*".to_string(), 
-      expression::Expr::Func(
-        |args: &[expression::Expr]| -> Result<expression::Expr, expression::Err> {
+      expression::Expr::Func
+      (
+        |args: &[expression::Expr]| -> Result<expression::Expr, expression::Err> 
+        {
           let floats = parse_list_of_floats(args)?;
           let first = *floats.first().ok_or(expression::Err::Reason("expected at least one number".to_string()))?;
           let sum_of_rest = floats[1..].iter().fold(first, |sum, a| sum * a);
