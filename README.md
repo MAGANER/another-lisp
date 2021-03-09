@@ -11,5 +11,12 @@ Prints all passed arguments. Compute it, if required.<br/>
 4) If              : if<br/>
 If condition is true, then compute first expression,<br/> 
 unless try to compute the second one, if it exists.<br/>
-5) Const variable definition : def<br/>
+5) Variable (re)definition : def<br/>
 Takes 2 arguments: name and value<br/>
+6) Lambdas: (fn (a) (+ a 1))<br/>
+Also you can execute it:<br/>
+***
+(print
+    (fn (a) (+ a 1) 2)
+)
+***
