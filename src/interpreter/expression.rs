@@ -20,7 +20,7 @@ pub enum Err
 #[derive(Clone)]
 pub struct LambdaStruct
 {
-    pub param: Box<Expr>, // Box to avoid recursive type definition
+    pub arg: Box<Expr>, // Box to avoid recursive type definition
     pub body : Box<Expr>
 }
 
