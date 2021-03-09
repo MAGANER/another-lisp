@@ -91,23 +91,68 @@ pub fn default_env() -> Env
       (
         |args: &[expression::Expr]| -> Result<expression::Expr, expression::Err> 
         {
-          let floats = parse_list_of_floats(args)?;
-          let first = *floats.first().ok_or(expression::Err::Reason("expected at least one number".to_string()))?;
-          let sum_of_rest = floats[1..].iter().fold(first, |sum, a| sum * a);
-          
-          Ok(expression::Expr::Number(sum_of_rest))
+          let floats = parse_list_of_floats(args);
+          match floats
+          {
+            Ok(val) =>
+            {
+              if val.len() == 0
+              {
+                return Ok(expression::Expr::Number(0.0f64))
+              }
+              let first = val.first().unwrap();
+              let result= val[1..].iter().fold(first.clone(),|a,b| a * b).clone();
+              Ok(expression::Expr::Number(result))
+            },
+            Err(val) =>
+            {
+              match val
+              {
+                expression::Err::Reason(v) =>
+                {
+                  println!("{}",v);
+                  process::exit(-1);
+                }
+              }
+            }
+          }
+
         }
       )
     );    
     data.insert(
       "/".to_string(), 
       expression::Expr::Func(
-        |args: &[expression::Expr]| -> Result<expression::Expr, expression::Err> {
-          let floats = parse_list_of_floats(args)?;
-          let first = *floats.first().ok_or(expression::Err::Reason("expected at least one number".to_string()))?;
-          let sum_of_rest = floats[1..].iter().fold(first, |sum, a| sum / a);
-          
-          Ok(expression::Expr::Number(sum_of_rest))
+        |args: &[expression::Expr]| -> Result<expression::Expr, expression::Err> 
+        {
+          let floats = parse_list_of_floats(args);
+          match floats
+          {
+            Ok(val) =>
+            {
+              if val.len() == 0
+              {
+                return Ok(expression::Expr::Number(0.0f64));
+              }
+
+              let first = val.first().unwrap();
+              let result= val[1..].iter().fold(first.clone(), |a, b| a / b);
+
+              Ok(expression::Expr::Number(result))
+            },
+            Err(val) =>
+            {
+              match val
+              {
+                expression::Err::Reason(v) =>
+                {
+                    println!("{}",v);
+                    process::exit(-1);
+                }
+              }
+            }
+          }
+
         }
       )
     );  
