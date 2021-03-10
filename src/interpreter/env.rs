@@ -426,18 +426,3 @@ pub fn unite_environments(env1:&Env, env2:&Env) -> Env
     }
     new_env
 }
-pub fn substract_environments(env1:&mut Env, env2:&mut Env) -> Env
-{
-  //return new envinronment with all elements contained with env1, but not env2
-  let mut new_env = Env{data:HashMap::new()};
-  for (key, val) in env1.data.iter()
-  {
-    match env2.data.get(key)
-    {
-      None => new_env.data.insert(key.to_string(),val.clone()),
-      _    => None
-    };
-  }
-
-  new_env
-}
