@@ -7,33 +7,48 @@ pub fn tokenize(expr:String) -> Vec<String>
 
     let mut current_token:String = "".to_string();
     let mut str_counter = 0;
+    let mut comment = false;
 
     for ch in expr.replace("(","( ").replace(")"," ) ").chars()
     {
-      if ch == '"' { str_counter+= 1;}
+      if ch == '\n' && comment
+      {
+        comment = false;
+      }
+      else if ch == '#'
+      {
+        comment = true;
+      }
 
-      if ch == '(' || ch == ')'
+      if !comment
       {
-        tokens.push(ch.to_string());
-      }
-      else if !ch.is_whitespace() || str_counter != 0
-      {
-        current_token.push(ch);
-      }
-      else
-      {
-        if !current_token.chars().all(|x| x.is_whitespace()) 
-        {
-          tokens.push(current_token.clone());
-        }
-        current_token.clear();
-      }
-      if str_counter == 2
-      {
-        str_counter = 0;
-      }
+          if ch == '"' { str_counter+= 1;}
+
+          if ch == '(' || ch == ')'
+          {
+            tokens.push(ch.to_string());
+          }
+          else if !ch.is_whitespace() || str_counter != 0
+          {
+            current_token.push(ch);
+          }
+          else
+          {
+            if !current_token.chars().all(|x| x.is_whitespace()) 
+            {
+              tokens.push(current_token.clone());
+            }
+            current_token.clear();
+          }
+
+          if str_counter == 2
+          {
+            str_counter = 0;
+          }
       
+      }
     }
+    
     count_brackets(&tokens);
     tokens
 }
