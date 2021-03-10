@@ -21,6 +21,15 @@ Also you can execute it:<br/>
     (fn (a) (+ a 1) 2)
 )
 ```
+You can define it to use somewhere else:<br/>
+```lisp
+(defn lmd
+  (fn (arg) (print arg))
+)
+
+(lmd! (2))
+```
+
 7)One line comment:<br>
 ```lisp 
 #(print "it won't never be printed")
