@@ -292,7 +292,11 @@ fn process_lambda(args  :&[expression::Expr],
 {
   //define and execute lambda
 
-  if args.len() > 2
+  if args.len() == 2
+  {
+    return Ok(define_lambda(&args).unwrap());
+  }
+  else if args.len() > 2
   {
     //define lambda and compute it
     let lambda = match define_lambda(&args[0..2]).unwrap()
