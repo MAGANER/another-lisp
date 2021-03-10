@@ -66,6 +66,7 @@ fn eval_built_in_form
         "if"    => Some(compute_if(arg_forms , env)),
         "def"   => Some(compute_def(arg_forms, env)),
         "fn"    => Some(process_lambda(arg_forms, env)),
+        "defn"  => Some(add_lambda_to_env(arg_forms,env)),
         "print" => {print_data(arg_forms, env); Some(Ok(expression::Expr::Bool(true)))},
         _       => None,
       },
@@ -224,6 +225,38 @@ fn compute_lambda(lambda:&expression::LambdaStruct,
     }
 
 }
+fn add_lambda_to_env(arg_forms: &[expression::Expr], env: &mut env::Env) -> Result<expression::Expr, expression::Err>
+{
+      if arg_forms.len() != 2
+      {
+        println!("can not define lambda!\n not enough arguments!");
+        std::process::exit(-1);
+      }
+      let lambda_def = match &arg_forms[1]
+      {
+            expression::Expr::List(val) => val,
+            _ =>
+            {
+                println!("can not process fn argument!");
+                std::process::exit(-1);
+            }
+      };
+
+      let lambda = define_lambda(&lambda_def[1..]);
+      let name   = match arg_forms[0].clone()
+      {
+          expression::Expr::Symbol(v) => v,
+          _ =>
+          {
+            println!("function name should be String!");
+            std::process::exit(-1);
+          }
+      };
+      env.data.insert(name,lambda.unwrap());
+  
+      Ok(expression::Expr::Bool(true))
+}
+
 fn process_lambda(args  :&[expression::Expr],
                   env   :&mut env::Env) -> Result<expression::Expr, expression::Err>
 {
