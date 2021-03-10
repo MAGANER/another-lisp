@@ -26,6 +26,37 @@ pub fn eval(exp: &expression::Expr, env: &mut env::Env) -> Result<expression::Ex
                           .first()
                           .ok_or(expression::Err::Reason("expected a non-empty list".to_string()))?;
 
+        //check is it function call
+        match first_form
+        {
+            expression::Expr::Symbol(val) =>
+            {
+                if is_fn_call(val,env)
+                {
+                  let lambda = match env.data.get(&val[0..val.len()-1].to_string()).unwrap()
+                  {
+                    expression::Expr::Lambda(val) => val.clone(),
+                    _ =>
+                    {
+                      println!("can not obtain lambda!");
+                      std::process::exit(-1);
+                    }
+                  };
+                  let args = match &list[1]
+                  {
+                      expression::Expr::List(val) => val.clone(),
+                      _ =>
+                      {
+                        println!("arguments must be contained with List!");
+                        std::process::exit(-1);
+                      }
+                  };
+                  return compute_lambda(&lambda,&args,env);
+                }
+            },
+            _ => ()
+        };
+
         let arg_forms = &list[1..];
         match eval_built_in_form(first_form, arg_forms, env)
         {
@@ -207,7 +238,6 @@ fn compute_lambda(lambda:&expression::LambdaStruct,
     temp_env = env::unite_environments(env,&temp_env);
 
     let result = eval(&lambda.body,&mut temp_env);
-    *env = env::substract_environments(env,&mut temp_env);
     match result
     {
       Ok(_) => result,
@@ -338,4 +368,9 @@ fn compute_expr_list(arg_forms: &[expression::Expr], env: &mut env::Env)
     .iter()
     .map(|x| eval(x, env))
     .collect()
+}
+
+fn is_fn_call(name:&String, env:&env::Env) -> bool
+{
+  name.chars().nth(name.len()-1).unwrap() == '!' && env.data.contains_key(&name[0..name.len()-1].to_string())
 }
