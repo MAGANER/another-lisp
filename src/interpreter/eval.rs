@@ -227,11 +227,9 @@ fn compute_lambda(lambda:&expression::LambdaStruct,
 fn process_lambda(args  :&[expression::Expr],
                   env   :&mut env::Env) -> Result<expression::Expr, expression::Err>
 {
-  if args.len() == 2
-  {
-    Ok(define_lambda(args).unwrap())
-  }
-  else if args.len() > 2
+  //define and execute lambda
+
+  if args.len() > 2
   {
     //define lambda and compute it
     let lambda = match define_lambda(&args[0..2]).unwrap()
