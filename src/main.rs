@@ -51,6 +51,7 @@ use interpreter::parser;
 use interpreter::eval;
 use interpreter::expression;
 use interpreter::execution_options;
+use interpreter::env as lisp_env;
 
 fn main() 
 {
@@ -67,7 +68,7 @@ fn main()
     }
 
     //init env, read, parse and execute the script
-    let mut env = eval::env::default_env();
+    let mut env = lisp_env::default_env();
 
     let script = fs::read_to_string(&args[1]).expect("can not open file!");
     let tokens = parser::tokenize(script);
@@ -75,7 +76,7 @@ fn main()
 
     run(trees,&mut env,&options);
 }
-fn run(trees:Vec<Vec<String>>, env:&mut eval::env::Env, options:&execution_options::ExecutionOptions)
+fn run(trees:Vec<Vec<String>>, env:&mut lisp_env::Env, options:&execution_options::ExecutionOptions)
 {
     for tree in trees.iter()
     {
