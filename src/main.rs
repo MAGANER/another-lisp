@@ -66,6 +66,7 @@ fn main()
     {
         options.print_every_operation = true;
     }
+    check_script_extension(&args[1]);
 
     //init env, read, parse and execute the script
     let mut env = lisp_env::default_env();
@@ -105,4 +106,27 @@ fn run(trees:Vec<Vec<String>>, env:&mut lisp_env::Env, options:&execution_option
 
     }
 }
+fn check_script_extension(path:&String)
+{
+    //break execution if extension is incorrect
+    let dot_pos = path.find('.');
 
+    match dot_pos
+    {
+        Some(val) =>
+        {
+            let start = val;
+            let file_type = &path[start+1..];
+            if file_type != "lisp"
+            {
+                println!("incorrect file type:{}",path); 
+                process::exit(-1);
+            }
+        },
+        None =>             
+        {
+            println!("incorrect file type:{}",path); 
+            process::exit(-1);
+        }
+    };
+}
