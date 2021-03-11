@@ -326,6 +326,8 @@ pub fn default_env() -> Env
       )
     );
 
+    //list operations
+
 
     Env {data}
   }
