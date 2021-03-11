@@ -3,6 +3,9 @@ personal pet project to teach myself Rust PL.<br/>
 Also the purpose is to write full lisp intereter.<br/>
 I followed this https://stopa.io/post/222 to write the basic interpeter<br/>
 
+Future goal is to create language to use<br/>
+instead of bash and its analogues.<br/>
+
 #Abilities
 1) Basic arithmetic: +,-,*,/<br/>
 2) Basic logic     : >, <, =, >=, <=, !, &&, ||<br/>
@@ -21,6 +24,15 @@ Also you can execute it:<br/>
     (fn (a) (+ a 1) 2)
 )
 ```
+You can define it to use somewhere else:<br/>
+```lisp
+(defn lmd
+  (fn (arg) (print arg))
+)
+
+(lmd! (2))
+```
+
 7)One line comment:<br>
 ```lisp 
 #(print "it won't never be printed")
