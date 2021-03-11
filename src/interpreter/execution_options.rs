@@ -5,7 +5,8 @@
 
 pub struct ExecutionOptions
 {
-  pub print_every_operation:bool
+  pub print_every_operation:bool,
+  pub repl:bool
 }
 
 
@@ -13,6 +14,7 @@ pub fn init_exec_options() -> ExecutionOptions
 {
     ExecutionOptions
     {
-        print_every_operation:false
+        print_every_operation:false,
+        repl: false
     }
 }

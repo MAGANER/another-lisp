@@ -45,18 +45,19 @@
 use std::env;
 use std::fs;
 use std::process;
+use std::io;
 
 mod interpreter;
 use interpreter::parser;
 use interpreter::eval;
 use interpreter::expression;
-use interpreter::execution_options;
+use interpreter::execution_options as exe_opt;
 use interpreter::env as lisp_env;
 
 fn main() 
 {
     //process arguments, if they are passed
-    let mut options = execution_options::init_exec_options();
+    let mut options = exe_opt::init_exec_options();
     let args:Vec<String> = env::args().collect();
     if args.len() ==  1 {
         println!("not enough arguments!");
@@ -66,18 +67,31 @@ fn main()
     {
         options.print_every_operation = true;
     }
-    check_script_extension(&args[1]);
+    if args.contains(&"repl".to_string())
+    {
+        options.repl = true;
+    }
+
+    if !options.repl 
+    {
+        check_script_extension(&args[1]);
+    }
 
     //init env, read, parse and execute the script
     let mut env = lisp_env::default_env();
 
-    let script = fs::read_to_string(&args[1]).expect("can not open file!");
-    let tokens = parser::tokenize(script);
-    let trees  = parser::split_trees(tokens);
+    if !options.repl
+    {
+        let script = fs::read_to_string(&args[1]).expect("can not open file!");
+        let tokens = parser::tokenize(script);
+        let trees  = parser::split_trees(tokens);
 
-    run(trees,&mut env,&options);
+        run(trees,&mut env,&options);
+    } else {
+                repl(&mut env,&options);
+           }
 }
-fn run(trees:Vec<Vec<String>>, env:&mut lisp_env::Env, options:&execution_options::ExecutionOptions)
+fn run(trees:Vec<Vec<String>>, env:&mut lisp_env::Env, options:&exe_opt::ExecutionOptions)
 {
     for tree in trees.iter()
     {
@@ -129,4 +143,27 @@ fn check_script_extension(path:&String)
             process::exit(-1);
         }
     };
+}
+
+fn repl(env:&mut lisp_env::Env,options:&exe_opt::ExecutionOptions)
+{
+    loop
+    {
+        print!(">");
+        let mut input = String::new();
+        match io::stdin().read_line(&mut input)
+        {
+            Ok(_) =>
+            {
+                let tokens = parser::tokenize(input);
+                let trees  = parser::split_trees(tokens);
+                run(trees,env,&options);
+            },
+            Err(val) =>
+            {
+                println!("{}",val);
+                process::exit(-1);
+            }
+        }
+    }
 }
