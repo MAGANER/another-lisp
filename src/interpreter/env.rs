@@ -297,8 +297,10 @@ pub fn default_env() -> Env
     );
     data.insert(
       "!".to_string(),
-      expression::Expr::Func(
-        |args: &[expression::Expr]| -> Result<expression::Expr, expression::Err> {
+      expression::Expr::Func
+      (
+        |args: &[expression::Expr]| -> Result<expression::Expr, expression::Err> 
+        {
           let booleans = arg_parser::parse_list_of_booleans(args);
 
           let result =
@@ -327,6 +329,51 @@ pub fn default_env() -> Env
     );
 
     //list operations
+    /*data.insert(
+      "init".to_string(),
+      expression::Expr::Func
+      (
+        |args: &[expression::Expr]| -> Result<expression::Expr, expression::Err> 
+        {
+
+        }
+
+      )
+    );*/
+    data.insert(
+      "head".to_string(),
+      expression::Expr::Func
+      (
+        |args: &[expression::Expr]| -> Result<expression::Expr, expression::Err> 
+        {
+            //return list head
+            if args.len() != 1
+            {
+              println!("head operation takes 1 argument only!");
+              process::exit(-1);
+            }
+            
+            match args[0].clone()
+            {
+                expression::Expr::List(val) =>
+                {
+
+                  let head = val.first();
+                  match head
+                  {
+                      Some(val) => Ok(val.clone()),
+                      None      => Ok(expression::Expr::Bool(false))
+                  }
+                },
+                _ =>
+                {
+                  println!("head operation takes only List!");
+                  process::exit(-1);
+                }
+            }
+        }
+      )
+    );
 
 
     Env {data}
