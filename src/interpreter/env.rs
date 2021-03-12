@@ -329,17 +329,6 @@ pub fn default_env() -> Env
     );
 
     //list operations
-    /*data.insert(
-      "init".to_string(),
-      expression::Expr::Func
-      (
-        |args: &[expression::Expr]| -> Result<expression::Expr, expression::Err> 
-        {
-
-        }
-
-      )
-    );*/
     data.insert(
       "head".to_string(),
       expression::Expr::Func
