@@ -363,7 +363,39 @@ pub fn default_env() -> Env
         }
       )
     );
+    data.insert(
+      "tail".to_string(),
+      expression::Expr::Func
+      (
+        |args: &[expression::Expr]| -> Result<expression::Expr, expression::Err> 
+        {
+            if args.len() != 1
+            {
+              println!("head operation takes 1 argument only!");
+              process::exit(-1);
+            }
 
+            match args[0].clone()
+            {
+                expression::Expr::List(val) =>
+                {
+
+                  if val.len() <= 1
+                  {
+                      return Ok(expression::Expr::Bool(false));
+                  } else {
+                            return Ok(expression::Expr::List(val[1..].to_vec()));
+                         }
+                },
+                _ =>
+                {
+                  println!("head operation takes only List!");
+                  process::exit(-1);
+                }
+            }            
+        }
+      )
+    );
 
     Env {data}
   }
