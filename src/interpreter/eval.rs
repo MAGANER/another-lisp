@@ -74,9 +74,7 @@ pub fn eval(exp: &expression::Expr, env: &mut env::Env) -> Result<expression::Ex
                         let args_eval = compute_expr_list(arg_forms,env);
                         f(&args_eval?)
                   },
-                  _ => Err(
-                        expression::Err::Reason("first form must be a function".to_string())
-                          ),
+                  _ => Ok(expression::Expr::List(list.to_vec())),
               }
           }
         }
