@@ -22,7 +22,7 @@ pub fn tokenize(expr:String) -> Vec<String>
 
       if !comment
       {
-          if ch == '"' { str_counter+= 1;}
+          if ch == '\'' { str_counter+= 1;}
 
           if ch == '(' || ch == ')'
           {
