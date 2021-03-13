@@ -371,7 +371,7 @@ pub fn default_env() -> Env
         {
             if args.len() != 1
             {
-              println!("head operation takes 1 argument only!");
+              println!("tail operation takes 1 argument only!");
               process::exit(-1);
             }
 
@@ -389,10 +389,74 @@ pub fn default_env() -> Env
                 },
                 _ =>
                 {
-                  println!("head operation takes only List!");
+                  println!("tail operation takes only List!");
                   process::exit(-1);
                 }
             }            
+        }
+      )
+    );
+    data.insert(
+      "concat".to_string(),
+      expression::Expr::Func
+      (
+        |args: &[expression::Expr]| -> Result<expression::Expr, expression::Err> 
+        {
+          if args.len() == 0
+          {
+            println!("concat operation takes at least 1 argument!");
+            process::exit(-1);
+          }
+          let mut new_list:Vec<expression::Expr> = Vec::new();
+          for arg in args
+          {
+            match arg
+            {
+              expression::Expr::List(val) =>
+              {
+                for elem in val.iter()
+                {
+                  new_list.push(elem.clone());
+                }
+              }
+              _ => new_list.push(arg.clone())
+            }
+          }
+
+
+          Ok(expression::Expr::List(new_list))
+        } 
+      )
+    );
+
+
+    //type checking operations
+    data.insert(
+      "type".to_string(),
+      expression::Expr::Func
+      (
+        |args: &[expression::Expr]| -> Result<expression::Expr, expression::Err> 
+        {
+          if args.len() == 0
+          {
+            println!("type function takes at least 1 argument!");
+            process::exit(-1);
+          }
+          let mut types:Vec<expression::Expr> = Vec::new();
+          for arg in args
+          {
+            match arg
+            {
+                expression::Expr::Bool(_)   => types.push(expression::Expr::Symbol("'Bool'".to_string())),
+                expression::Expr::Number(_) => types.push(expression::Expr::Symbol("'Number'".to_string())),
+                expression::Expr::Symbol(_) => types.push(expression::Expr::Symbol("'String'".to_string())),
+                expression::Expr::List(_)   => types.push(expression::Expr::Symbol("'List'".to_string())),
+                expression::Expr::Lambda(_) => types.push(expression::Expr::Symbol("'Lambda'".to_string())),
+                _ => ()
+            }
+          }
+
+          Ok(expression::Expr::List(types))
         }
       )
     );
