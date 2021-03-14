@@ -42,7 +42,13 @@ pub fn default_env() -> Env
               match strings
               {
                 Ok(val)      => {
-                                    let result = val.iter().fold(String::from(""),|a:String,b:&String| a+b );
+                                    let clear = |x:&String| x.chars().filter(|a| a != &'\'').collect::<String>();
+                                    let mut result =   val.iter()
+                                                          .fold(String::from(""),
+                                                          |a:String,b:&String| 
+                                                          clear(&a) + clear(&b).as_str()) + "'";
+                                                          
+                                    result = "'".to_string() + &result;
                                     Ok(expression::Expr::Symbol(result))
                                 },
                 Err(err_val) => match err_val
