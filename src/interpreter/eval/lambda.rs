@@ -26,8 +26,8 @@ pub fn define_lambda(arg_forms:&[expression::Expr]) -> Result<expression::Expr, 
   Ok(expression::Expr::Lambda(lambda))
 }
 pub fn compute_lambda(lambda:&expression::LambdaStruct,
-                  args  :&[expression::Expr],
-                  env   :&mut env::Env) -> Result<expression::Expr, expression::Err> 
+                     args   :&[expression::Expr],
+                     env    :&mut env::Env) -> Result<expression::Expr, expression::Err> 
 {
 
     //get the vector of expression
@@ -70,7 +70,8 @@ pub fn compute_lambda(lambda:&expression::LambdaStruct,
     let max = names.len();
     for counter in 0..max
     {
-      temp_env.data.insert(names[counter].clone(),args[counter].clone());
+        let evaled_arg = eval(&args[counter],env).unwrap();
+        temp_env.data.insert(names[counter].clone(),evaled_arg.clone());
     }
     temp_env = env::unite_environments(env,&temp_env);
 
