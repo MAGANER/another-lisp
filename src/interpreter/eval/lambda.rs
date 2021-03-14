@@ -1,3 +1,10 @@
+/*
+    Sub module of eval.
+    Contains functions to compute and define lambdas.
+
+
+*/
+
 use super::expression;
 use super::env;
 use super::eval;
@@ -5,6 +12,9 @@ use std::collections::HashMap;
 
 pub fn define_lambda(arg_forms:&[expression::Expr]) -> Result<expression::Expr, expression::Err>
 {
+  //create lambda
+
+  //get arguments
   let args = &arg_forms[0];
   let _args = match args
   {
@@ -15,7 +25,7 @@ pub fn define_lambda(arg_forms:&[expression::Expr]) -> Result<expression::Expr, 
       std::process::exit(-1);
     }
   };
-
+  
   let body = &arg_forms[1];
 
   let lambda = expression::LambdaStruct
@@ -29,7 +39,6 @@ pub fn compute_lambda(lambda:&expression::LambdaStruct,
                      args   :&[expression::Expr],
                      env    :&mut env::Env) -> Result<expression::Expr, expression::Err> 
 {
-
     //get the vector of expression
     let fn_args = match &*lambda.arg
     {
@@ -43,6 +52,8 @@ pub fn compute_lambda(lambda:&expression::LambdaStruct,
     if args.len() != fn_args.len()
     {
         println!("not enough arguments passed to lambda!");
+        println!("passed:{}",args.len());
+        println!("expected:{}",fn_args.len());
         std::process::exit(-1);
     }
 
@@ -70,8 +81,25 @@ pub fn compute_lambda(lambda:&expression::LambdaStruct,
     let max = names.len();
     for counter in 0..max
     {
-        let evaled_arg = eval(&args[counter],env).unwrap();
-        temp_env.data.insert(names[counter].clone(),evaled_arg.clone());
+        let evaled_arg =
+        {
+          match eval(&args[counter],env)
+          {
+              Ok(val)  => val,
+              Err(err) =>
+              {
+                  match err
+                  {
+                      expression::Err::Reason(val) =>
+                      {
+                          println!("{}",val);
+                          std::process::exit(-1);
+                      }
+                  }
+              }
+          }
+      };
+      temp_env.data.insert(names[counter].clone(),evaled_arg.clone());
     }
     temp_env = env::unite_environments(env,&temp_env);
 
@@ -125,7 +153,7 @@ pub fn add_lambda_to_env(arg_forms: &[expression::Expr], env: &mut env::Env) -> 
       Ok(expression::Expr::Bool(true))
 }
 pub fn process_lambda(args  :&[expression::Expr],
-                  env   :&mut env::Env) -> Result<expression::Expr, expression::Err>
+                      env   :&mut env::Env) -> Result<expression::Expr, expression::Err>
 {
   //define and execute lambda
 
