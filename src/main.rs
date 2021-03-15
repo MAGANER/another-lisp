@@ -39,7 +39,7 @@
             #(print "it won't never be printed")
 
 
-
+        read more about:https://github.com/MAGANER/another-lisp
 */
 
 use std::env;
@@ -72,6 +72,7 @@ fn main()
         options.repl = true;
     }
 
+    //if user chooses repl mode, then don't read file
     if !options.repl 
     {
         check_script_extension(&args[1]);
@@ -80,6 +81,7 @@ fn main()
     //init env, read, parse and execute the script
     let mut env = lisp_env::default_env();
 
+    //run script if it's not read-eval-print-loop
     if !options.repl
     {
         let script = fs::read_to_string(&args[1]).expect("can not open file!");
@@ -123,6 +125,8 @@ fn run(trees:Vec<Vec<String>>, env:&mut lisp_env::Env, options:&exe_opt::Executi
 fn check_script_extension(path:&String)
 {
     //break execution if extension is incorrect
+    //correct extension is .lisp
+
     let dot_pos = path.find('.');
 
     match dot_pos
@@ -145,13 +149,21 @@ fn check_script_extension(path:&String)
     };
 }
 
+
+use std::io::Write;
 fn repl(env:&mut lisp_env::Env,options:&exe_opt::ExecutionOptions)
 {
+    //read string and execute it
+    let reader = io::stdin();
     loop
     {
-        print!(">");
         let mut input = String::new();
-        match io::stdin().read_line(&mut input)
+
+        print!(">");
+        io::stdout().flush();
+
+        let _input = reader.read_line(&mut input);
+        match _input
         {
             Ok(_) =>
             {
@@ -164,6 +176,6 @@ fn repl(env:&mut lisp_env::Env,options:&exe_opt::ExecutionOptions)
                 println!("{}",val);
                 process::exit(-1);
             }
-        }
+        };
     }
 }
