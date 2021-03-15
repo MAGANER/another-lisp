@@ -26,12 +26,11 @@ pub fn define_lambda(arg_forms:&[expression::Expr]) -> Result<expression::Expr, 
     }
   };
   
-  let body = &arg_forms[1];
-
+  let body = &arg_forms[1..];
   let lambda = expression::LambdaStruct
   {
     arg :Box::new(_args.clone()),
-    body:Box::new(body.clone())
+    body:Box::new(body.to_vec())
   };
   Ok(expression::Expr::Lambda(lambda))
 }
@@ -40,7 +39,7 @@ pub fn compute_lambda(lambda:&expression::LambdaStruct,
                      env    :&mut env::Env) -> Result<expression::Expr, expression::Err> 
 {
     //get the vector of expression
-    let fn_args = match &*lambda.arg
+    let fn_args = match lambda.arg.as_ref()
     {
       expression::Expr::List(val) => val,
       _ =>
@@ -56,7 +55,7 @@ pub fn compute_lambda(lambda:&expression::LambdaStruct,
         println!("expected:{}",fn_args.len());
         std::process::exit(-1);
     }
-
+  
     //create vector of arguments name
     let names = {
                   let mut names:Vec<String> = Vec::new();
@@ -103,23 +102,32 @@ pub fn compute_lambda(lambda:&expression::LambdaStruct,
     }
     temp_env = env::unite_environments(env,&temp_env);
 
-    let result = eval(&lambda.body,&mut temp_env);
-    match result
-    {
-      Ok(_) => result,
-      Err(val) =>
-      {
-        match val
+    let res =
+    { 
+        let mut sub_res = expression::Expr::Bool(false);
+        for expr in lambda.body.iter()
         {
-          expression::Err::Reason(v) =>
+          let result = eval(&expr.clone(),&mut temp_env);
+          sub_res = match result
           {
-            println!("{}",v);
-            std::process::exit(-1);
-          }
+            Ok(val) => val,
+            Err(err_val) =>
+            {
+              match err_val
+              {
+                  expression::Err::Reason(v) =>
+                  {
+                  println!("{}",v);
+                  std::process::exit(-1);
+                  }
+              }
+            }
+          };
         }
-      }
-    }
+    sub_res
+  };
 
+  Ok(res)
 }
 pub fn add_lambda_to_env(arg_forms: &[expression::Expr], env: &mut env::Env) -> Result<expression::Expr, expression::Err>
 {

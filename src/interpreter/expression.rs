@@ -21,7 +21,7 @@ pub enum Err
 pub struct LambdaStruct
 {
     pub arg: Box<Expr>, // Box to avoid recursive type definition
-    pub body : Box<Expr>
+    pub body : Box<Vec<Expr>>
 }
 
 
