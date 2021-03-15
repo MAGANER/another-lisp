@@ -27,6 +27,7 @@ pub struct LambdaStruct
 
 pub fn is_string_value(val:&String) -> bool
 {
+    //string begins with ' and ends with '
     let end = val.ends_with("'");
     let start = val.chars().rev().collect::<String>().ends_with("'");
     end && start
