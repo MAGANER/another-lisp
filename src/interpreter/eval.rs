@@ -127,11 +127,29 @@ fn compute_if(arg_forms: &[expression::Expr], env: &mut env::Env) -> Result<expr
               //if argument is true, then compute first expression
               //unless try to compute the second one
               let form_idx = if b { 1 } else { 2 };
-              let res_form = arg_forms.get(form_idx)
-                                      .ok_or(expression::Err::Reason( format!("can not find option to do={}",form_idx)))?;
-              let res_eval = eval(res_form, env);
-    
-              res_eval
+              let res_form = arg_forms.get(form_idx);
+              
+              let expr = 
+              match res_form
+              {
+                  Some(val) => val,
+                  None      =>
+                  {
+                    if form_idx == 1
+                    {
+                      println!("can not get {} expression to execute!",form_idx);
+                      std::process::exit(-1);
+                    } else {
+                             &expression::Expr::None
+                           }
+                  }
+              };
+              
+              match expr
+              {
+                expression::Expr::None => Ok(expression::Expr::None),
+                val => eval(val,env)
+              }
           },
     _ => Err(expression::Err::Reason(format!("unexpected argument! it should be Bool!")))
   }
