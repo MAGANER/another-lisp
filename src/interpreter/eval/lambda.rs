@@ -102,15 +102,20 @@ pub fn compute_lambda(lambda:&expression::LambdaStruct,
     }
     temp_env = env::unite_environments(env,&temp_env);
 
-    let res =
-    { 
-        let mut sub_res = expression::Expr::Bool(false);
-        for expr in lambda.body.iter()
+
+      let mut sub_res = expression::Expr::Bool(false);
+      let mut counter = 0;
+      while counter < lambda.body.len()
+      {
+        let expr = lambda.body.iter().nth(counter).unwrap().clone();
+        let result = eval(&expr.clone(),&mut temp_env);
+        sub_res = match result
         {
-          let result = eval(&expr.clone(),&mut temp_env);
-          sub_res = match result
-          {
-            Ok(val) => val,
+            Ok(val) => match val
+                       {
+                         expression::Expr::Repeat => {counter = 0; expression::Expr::Bool(false)},
+                         _ => { counter += 1;val}
+                       },
             Err(err_val) =>
             {
               match err_val
@@ -124,10 +129,9 @@ pub fn compute_lambda(lambda:&expression::LambdaStruct,
             }
           };
         }
-    sub_res
-  };
 
-  Ok(res)
+
+  Ok(sub_res)
 }
 pub fn add_lambda_to_env(arg_forms: &[expression::Expr], env: &mut env::Env) -> Result<expression::Expr, expression::Err>
 {
