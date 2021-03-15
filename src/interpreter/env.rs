@@ -458,6 +458,8 @@ pub fn default_env() -> Env
                 expression::Expr::Symbol(_) => types.push(expression::Expr::Symbol("'String'".to_string())),
                 expression::Expr::List(_)   => types.push(expression::Expr::Symbol("'List'".to_string())),
                 expression::Expr::Lambda(_) => types.push(expression::Expr::Symbol("'Lambda'".to_string())),
+                expression::Expr::None      => types.push(expression::Expr::Symbol("'None'".to_string())),
+                expression::Expr::Repeat    => types.push(expression::Expr::Symbol("'Repeat'".to_string())),
                 _ => ()
             }
           }
