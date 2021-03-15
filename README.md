@@ -84,3 +84,19 @@ result:'List'
 (print (type 1 'hey' False))
 ```
 result:('Number'  'String' 'Bool)
+
+10) Repeat<br/>
+It is pretty experimental feature, but<br/>
+it works in the same way, as cycle does.
+
+### Example:
+```lisp
+(
+    defn test (fn (a)
+                (print a)
+                (def a (+ a 1))
+                (if (< a 10) repeat)
+              )
+              
+)
+```
