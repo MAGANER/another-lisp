@@ -101,7 +101,7 @@ fn eval_built_in_form
         "def"   => Some(compute_def(arg_forms, env)),
         "fn"    => Some(lambda::process_lambda(arg_forms, env)),
         "defn"  => Some(lambda::add_lambda_to_env(arg_forms,env)),
-        "print" => {print_data(arg_forms, env); Some(Ok(expression::Expr::Bool(true)))},
+        "print" => {print_data(arg_forms, env); Some(Ok(expression::Expr::None))},
         _       => None,
       },
     _ => None,
