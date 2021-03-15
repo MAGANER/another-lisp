@@ -8,7 +8,8 @@ pub enum Expr
     List(Vec<Expr>),
     Func(fn(&[Expr]) -> Result<Expr, Err>),
     Lambda(LambdaStruct),
-    Repeat
+    Repeat,
+    None
 }
 
 //inner error type
