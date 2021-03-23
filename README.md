@@ -65,6 +65,15 @@ unites different value into the list.
 ```
 result:(1 2 'hey' True False 645)<br/>
 
+### get
+return the list element or None if it is out of borders.
+```lisp
+(def list (1 2.55 'hello'))
+(get 1 list)
+```
+
+result:(if you use it with print) 2.55<br>
+
 9) Type checking<br/>
 To find out the type of value you can use ```type``` operation.<br/>
 ### Example 1:
