@@ -16,6 +16,10 @@ pub fn eval(exp: &expression::Expr, env: &mut env::Env) -> Result<expression::Ex
         {
           Ok(expression::Expr::Repeat)
         }
+        else if k == "None"
+        {
+          Ok(expression::Expr::None)
+        }
         else if expression::is_string_value(k)
         {
              Ok(exp.clone())
