@@ -434,6 +434,47 @@ pub fn default_env() -> Env
         } 
       )
     );
+    data.insert(
+      "get".to_string(),
+      expression::Expr::Func
+      (
+        |args: &[expression::Expr]| -> Result<expression::Expr, expression::Err> 
+        {
+          if args.len() != 2
+          {
+            println!("get operation takes element position and list!");
+            process::exit(-1);
+          }
+
+          let pos = match args[0]
+          {
+            expression::Expr::Number(val) => val as i32,
+            _ =>
+            {
+              println!("first argument is position and should be Number!");
+              process::exit(-1);
+            }
+          };
+          let list = match args[1].clone()
+          {
+            expression::Expr::List(val) => val,
+            _ =>
+            {
+              println!("second argument is position and should be List!");
+              process::exit(-1);
+            }
+          };
+
+          if pos > list.len() as i32 || pos < 0
+          {
+            Ok(expression::Expr::None)  
+          } else {
+                    Ok(list[pos as usize].clone())
+                 }
+          
+        }
+      )
+    );
 
 
     //type checking operations
